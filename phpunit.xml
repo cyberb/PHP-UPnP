@@ -1,0 +1,16 @@
+<phpunit bootstrap="test/bootstrap.php" colors="true">
+    <testsuites>
+        <testsuite name="PHP UPnP">
+            <directory>./tests/unit/</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>./</directory>
+            <exclude>
+                <directory>./tests/unit/</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>
