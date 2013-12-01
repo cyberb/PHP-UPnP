@@ -12,13 +12,11 @@
  * @todo Add security checks for eg. arguments.
  * @todo Response parsing before return in SOAP-method calls.
  */
-class phpUPnP
+class UPnP
 {
 	const USER_AGENT = 'MacOSX/10.8.2 UPnP/1.1 PHP-UPnP/0.0.1a';
 
 	private $curlHandle = null;
-
-	private $defaultURL = null;
 
 	/**
 	 * Perform an M-SEARCH multicast request for detecting UPnP-devices in network.
@@ -59,15 +57,13 @@ class phpUPnP
 		return $response;
 	}
 
-    public function discoverIGDUrl() {
-
-        $igd = 'InternetGatewayDevice';
-        $response = $this->mSearch("urn:schemas-upnp-org:device:$igd:1");
+    public function discover($device) {
+        $response = $this->mSearch($device);
         $location = 'location';
         if (count($response) > 0 && array_key_exists($location, $response[0])) {
-            $this->setDefaultURL($response[0][$location]);
+            return $response[0][$location];
         } else {
-            throw new Exception("Unable to find any $igd");
+            throw new Exception("Unable to find any $device");
         }
     }
 
@@ -121,28 +117,8 @@ class phpUPnP
 		return $this->curlHandle;
 	}
 
-	public function setVolume( $desiredVolume = 0, $channel = 'Master', $instanceId = 0 )
-	{
-		return $this->sendRequestToDevice( 'SetVolume', array(
-			'DesiredVolume' => $desiredVolume,
-			'Channel' => $channel,
-			'InstanceId' => $instanceId,
-		));
-	}
-
-	public function setMute( $desiredMute = 1, $channel = 'Master', $instanceId = 0 )
-	{
-		return $this->sendRequestToDevice( 'SetMute', array(
-			'DesiredMute' => $desiredMute,
-			'Channel' => $channel,
-			'InstanceId' => $instanceId,
-		));
-	}
-
 	public function sendRequestToDevice( $method, $arguments, $url = null, $type = 'RenderingControl:1', $hostIp = '127.0.0.1', $hostPort = '80' )
 	{
-		if( is_null( $url ) ) $url = $this->getDefaultURL();
-
 		$body  ='<?xml version="1.0" encoding="utf-8"?>' . "\r\n";
 		$body .='<s:Envelope s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">' . "\r\n";
 		$body .='   <s:Body>' . "\r\n";
@@ -177,47 +153,4 @@ class phpUPnP
 		return $response;
 	}
 
-	public function getDefaultURL()
-	{
-		if( is_null( $this->defaultURL ) )
-			throw new Exception('You must set a Default URL.');
-        return $this->defaultURL;
-	}
-
-	public function setDefaultURL( $url )
-	{
-		$this->defaultURL = $url;
-	}
-
-    public function getExternalAddress()
-    {
-        $file = file_get_contents($this->getDefaultURL());
-        $doc = new DOMDocument();
-        $doc->loadXML($file);
-        $xpath = new DOMXpath($doc);
-        $xpath->registerNamespace('x', 'urn:schemas-upnp-org:device-1-0');
-        $type = 'urn:schemas-upnp-org:service:WANPPPConnection:1';
-        $urlBase =$xpath->query("//x:URLBase")->item(0)->nodeValue;
-        $list =$xpath->query("//x:service[x:serviceType[.='$type']]/x:controlURL");
-        if ($list->length == 1) {
-            $addressUrl = $urlBase.$list->item(0)->nodeValue;
-            $prsedUrl = parse_url($addressUrl);
-            $host = $prsedUrl['host'];
-            $port = $prsedUrl['port'];
-//            echo("address url: ".$addressUrl."\n");
-            $addressXml = $this->sendRequestToDevice(
-                "GetExternalIPAddress",
-                array(),
-                $addressUrl,
-                "WANPPPConnection:1",
-                $host,
-                $port);
-
-//            echo($addressXml."\n");
-            $addressDoc = new DOMDocument();
-            $addressDoc->loadXML($addressXml);
-            $addressXpath = new DOMXpath($addressDoc);
-            return $addressXpath->query("//*[local-name()='NewExternalIPAddress']")->item(0)->nodeValue;
-        }
-    }
 }

@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    <URLBase>http://192.168.1.254:2555</URLBase>
+    <device>
+        <UDN>uuid:UPnP_router_guid</UDN>
+        <deviceType>urn:schemas-upnp-org:device:InternetGatewayDevice:1</deviceType>
+        <friendlyName>Router</friendlyName>
+        <manufacturer>Router Manufacturer</manufacturer>
+        <manufacturerURL>Router Manufacturer URL</manufacturerURL>
+        <modelDescription>Router Description</modelDescription>
+        <modelName>Router Model</modelName>
+        <modelNumber>Router Number</modelNumber>
+        <modelURL>modelURL</modelURL>
+        <serialNumber>112233</serialNumber>
+        <UPC>00001</UPC>
+        <presentationURL>http://192.168.1.254:80</presentationURL>
+        <serviceList>
+            <service>
+                <serviceType>urn:schemas-upnp-org:service:Layer3Forwarding:1</serviceType>
+                <serviceId>urn:upnp-org:serviceId:Layer3Forwarding1</serviceId>
+                <SCPDURL>/upnp/UPnP_router_guid/Layer3Forwarding1.xml</SCPDURL>
+                <controlURL>/upnp/UPnP_router_guid/Layer3Forwarding1.ctl</controlURL>
+                <eventSubURL>/upnp/UPnP_router_guid/Layer3Forwarding1.evt</eventSubURL>
+            </service>
+        </serviceList>
+        <deviceList>
+            <device>
+                <UDN>uuid:UPnP_router_guid_atm0</UDN>
+                <deviceType>urn:schemas-upnp-org:device:WANDevice:1</deviceType>
+                <friendlyName>External WAN Device</friendlyName>
+                <manufacturer>Router Manufacturer</manufacturer>
+                <manufacturerURL></manufacturerURL>
+                <modelDescription></modelDescription>
+                <modelName>Windows Media Connect Compatible (OpenRG_IGD_WAN)</modelName>
+                <modelNumber></modelNumber>
+                <modelURL></modelURL>
+                <serialNumber></serialNumber>
+                <UPC></UPC>
+                <presentationURL>http://192.168.1.254:80</presentationURL>
+                <serviceList>
+                    <service>
+                        <serviceType>urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1</serviceType>
+                        <serviceId>urn:upnp-org:serviceId:WANCommonIFC1</serviceId>
+                        <SCPDURL>/upnp/UPnP_router_guid_atm0/WANCommonIFC1.xml</SCPDURL>
+                        <controlURL>/upnp/UPnP_router_guid_atm0/WANCommonIFC1.ctl</controlURL>
+                        <eventSubURL>/upnp/UPnP_router_guid_atm0/WANCommonIFC1.evt</eventSubURL>
+                    </service>
+                </serviceList>
+                <deviceList>
+                    <device>
+                        <UDN>uuid:UPnP_router_guid_ppp0</UDN>
+                        <deviceType>urn:schemas-upnp-org:device:WANConnectionDevice:1</deviceType>
+                        <friendlyName>Router</friendlyName>
+                        <manufacturer>Router Manufacturer</manufacturer>
+                        <manufacturerURL></manufacturerURL>
+                        <modelDescription>Hub 4</modelDescription>
+                        <modelName>Windows Media Connect Compatible (OpenRG_IGD_WANConnection)</modelName>
+                        <modelNumber></modelNumber>
+                        <modelURL></modelURL>
+                        <serialNumber></serialNumber>
+                        <UPC></UPC>
+                        <presentationURL>http://192.168.1.254:80</presentationURL>
+                        <serviceList>
+                            <service>
+                                <serviceType>urn:schemas-upnp-org:service:WANPPPConnection:1</serviceType>
+                                <serviceId>urn:upnp-org:serviceId:WANPPPConn1</serviceId>
+                                <SCPDURL>/upnp/UPnP_router_guid_ppp0/WANPPPConn1.xml</SCPDURL>
+                                <controlURL>/upnp/UPnP_router_guid_ppp0/WANPPPConn1.ctl</controlURL>
+                                <eventSubURL>/upnp/UPnP_router_guid_ppp0/WANPPPConn1.evt</eventSubURL>
+                            </service>
+                            <service>
+                                <serviceType>urn:schemas-upnp-org:service:WANDSLLinkConfig:1</serviceType>
+                                <serviceId>urn:upnp-org:serviceId:WANDSLLinkC1</serviceId>
+                                <SCPDURL>/upnp/UPnP_router_guid_ppp0/WANDSLLinkC1.xml</SCPDURL>
+                                <controlURL>/upnp/UPnP_router_guid_ppp0/WANDSLLinkC1.ctl</controlURL>
+                                <eventSubURL>/upnp/UPnP_router_guid_ppp0/WANDSLLinkC1.evt</eventSubURL>
+                            </service>
+                        </serviceList>
+                    </device>
+                </deviceList>
+            </device>
+            <device>
+                <UDN>uuid:UPnP_router_guid_br0</UDN>
+                <deviceType>urn:schemas-upnp-org:device:LANDevice:1</deviceType>
+                <friendlyName>Internal WAN Device</friendlyName>
+                <manufacturer>Router Manufacturer</manufacturer>
+                <manufacturerURL></manufacturerURL>
+                <modelDescription></modelDescription>
+                <modelName>Windows Media Connect Compatible (OpenRG_IGD_LAN)</modelName>
+                <modelNumber></modelNumber>
+                <modelURL></modelURL>
+                <serialNumber></serialNumber>
+                <UPC></UPC>
+                <presentationURL>http://192.168.1.254:80</presentationURL>
+                <serviceList>
+                    <service>
+                        <serviceType>urn:schemas-upnp-org:service:LANHostConfigManagement:1</serviceType>
+                        <serviceId>urn:upnp-org:serviceId:LANHostCfg1</serviceId>
+                        <SCPDURL>/upnp/UPnP_router_guid_br0/LANHostCfg1.xml</SCPDURL>
+                        <controlURL>/upnp/UPnP_router_guid_br0/LANHostCfg1.ctl</controlURL>
+                        <eventSubURL>/upnp/UPnP_router_guid_br0/LANHostCfg1.evt</eventSubURL>
+                    </service>
+                </serviceList>
+            </device>
+        </deviceList>
+    </device>
+</root>
