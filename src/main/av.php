@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Not tested AV prototype
+ */
 class Av {
     private $upnp = null;
     private $url = null;
@@ -14,7 +17,7 @@ class Av {
 
     public function setVolume( $desiredVolume = 0, $channel = 'Master', $instanceId = 0 )
     {
-        return $this->upnp->sendRequestToDevice( 'SetVolume', array(
+        return $this->upnp->call( 'SetVolume', array(
             'DesiredVolume' => $desiredVolume,
             'Channel' => $channel,
             'InstanceId' => $instanceId,
@@ -23,7 +26,7 @@ class Av {
 
     public function setMute( $desiredMute = 1, $channel = 'Master', $instanceId = 0 )
     {
-        return $this->upnp->sendRequestToDevice( 'SetMute', array(
+        return $this->upnp->call( 'SetMute', array(
             'DesiredMute' => $desiredMute,
             'Channel' => $channel,
             'InstanceId' => $instanceId,

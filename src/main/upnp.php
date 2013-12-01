@@ -3,14 +3,7 @@
 /**
  * Communicate with UPnP devices.
  *
- * Not static for being able to have instances for different devices.
- *
  * @author Morten Hekkvang <artheus@github>
- *
- * @todo Create config file.
- * @todo Better commenting.
- * @todo Add security checks for eg. arguments.
- * @todo Response parsing before return in SOAP-method calls.
  */
 class UPnP
 {
@@ -23,7 +16,7 @@ class UPnP
 	 * @todo Allow unicasting.
 	 * @todo Sort arguments better.
 	 */
-	public function mSearch( $st = 'ssdp:all', $mx = 2, $man = 'ssdp:discover', $host = '239.255.255.250', $port = 1900, $sockTimout = '5' )
+	public function search( $st = 'ssdp:all', $mx = 2, $man = 'ssdp:discover', $host = '239.255.255.250', $port = 1900, $sockTimout = '5' )
 	{
         $msg = MSearchParser::request($host, $port, $man, $mx, $st);
 
@@ -51,7 +44,7 @@ class UPnP
 	}
 
     public function discover($device) {
-        $response = $this->mSearch($device);
+        $response = $this->search($device);
         $location = 'location';
         if (count($response) > 0 && array_key_exists($location, $response[0])) {
             return $response[0][$location];
@@ -62,9 +55,6 @@ class UPnP
 
 
 
-	/**
-	 * Get the curl handle for performing soap requests.
-	 */
 	public function getCurlHandle()
 	{
 		if( is_null( $this->curlHandle ) ) {
@@ -74,7 +64,7 @@ class UPnP
 		return $this->curlHandle;
 	}
 
-	public function sendRequestToDevice( $method, $arguments, $url = null, $type = 'RenderingControl:1', $host = '127.0.0.1', $port = '80' )
+	public function call( $method, $arguments, $url = null, $type = 'RenderingControl:1', $host = '127.0.0.1', $port = '80' )
 	{
 
         $request = new UPnpRequest($method, $arguments, $type, $host, $port);
