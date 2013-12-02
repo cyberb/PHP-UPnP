@@ -17,4 +17,14 @@ class UPnP_Integration_Test extends \PHPUnit_Framework_TestCase {
 
         $this->assertEquals(filter_var($externalAddress, FILTER_VALIDATE_IP), $externalAddress);
     }
+
+    public function test_Port_Mappings() {
+        $upnp = new Igd(new UPnP());
+        $upnp->discover();
+        $mappings = $upnp->getPortMappings();
+
+        echo(sizeof($mappings));
+
+        $this->assertGreaterThan(0, sizeof($mappings));
+    }
 }

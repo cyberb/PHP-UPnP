@@ -1,34 +1,20 @@
 <?php
 
-/**
- * Communicate with UPnP devices.
- *
- * @author Morten Hekkvang <artheus@github>
- */
 class UPnP
 {
 
 	private $curlHandle = null;
 
-	/**
-	 * Perform an M-SEARCH multicast request for detecting UPnP-devices in network.
-	 *
-	 * @todo Allow unicasting.
-	 * @todo Sort arguments better.
-	 */
 	public function search( $st = 'ssdp:all', $mx = 2, $man = 'ssdp:discover', $host = '239.255.255.250', $port = 1900, $sockTimout = '5' )
 	{
         $msg = MSearchParser::request($host, $port, $man, $mx, $st);
 
-		// MULTICAST MESSAGE
 		$sock = socket_create( AF_INET, SOCK_DGRAM, 0 );
-		$opt_ret = socket_set_option( $sock, 1, 6, TRUE );
-		$send_ret = socket_sendto( $sock, $msg, strlen( $msg ), 0, $host, $port);
+		socket_set_option( $sock, 1, 6, TRUE );
+		socket_sendto( $sock, $msg, strlen( $msg ), 0, $host, $port);
 
-		// SET TIMEOUT FOR RECIEVE
 		socket_set_option( $sock, SOL_SOCKET, SO_RCVTIMEO, array( 'sec'=>$sockTimout, 'usec'=>'0' ) );
 
-		// RECIEVE RESPONSE
 		$response = array();
 		do {
 			$buf = null;
@@ -64,10 +50,11 @@ class UPnP
 		return $this->curlHandle;
 	}
 
-	public function call( $method, $arguments, $url = null, $type = 'RenderingControl:1', $host = '127.0.0.1', $port = '80' )
+	public function call( $method, $arguments, $url, $type)
 	{
 
-        $request = new UPnpRequest($method, $arguments, $type, $host, $port);
+        $purl = parse_url($url);
+        $request = new UPnpRequest($method, $arguments, $type, $purl['host'], $purl['port']);
 
 		$ch = curl_init();
 		curl_setopt( $ch, CURLOPT_HTTPHEADER, $request->headers() );
@@ -77,7 +64,12 @@ class UPnP
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $request->body());
 
 		$response = curl_exec( $ch );
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close( $ch );
+
+        if ($code == 500) {
+            throw new Exception($response);
+        }
 
 		return $response;
 	}

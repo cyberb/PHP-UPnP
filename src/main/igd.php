@@ -1,36 +1,60 @@
 <?php
 
-class Igd {
+class Igd
+{
 
     private $upnp = null;
     private $controlUrl = null;
 
-    const GET_EXTERNAL_IP = "GetExternalIPAddress";
+    const GetExternalIPAddress = "GetExternalIPAddress";
+    const GetGenericPortMappingEntry = "GetGenericPortMappingEntry";
 
-    const TYPE = "WANPPPConnection:1";
+    const WANPPPConnection = "WANPPPConnection:1";
 
-    public function __construct(UPnP $upnp) {
+    const InternetGatewayDevice = "urn:schemas-upnp-org:device:InternetGatewayDevice:1";
+
+    const LIMIT = 100000;
+
+    public function __construct(UPnP $upnp)
+    {
         $this->upnp = $upnp;
     }
 
-    public function discover() {
-        $this->controlUrl = $this->upnp->discover("urn:schemas-upnp-org:device:InternetGatewayDevice:1");
+    public function discover()
+    {
+        $this->controlUrl = $this->upnp->discover(self::InternetGatewayDevice);
     }
 
     public function getExternalAddress()
     {
-
-        $this->checkDiscovery();
-
-        $controlXml = file_get_contents($this->controlUrl);
-
-        $url = IgdParser::parseAddressUrl($controlXml);
-
-        $purl = parse_url($url);
-
-        $xml = $this->upnp->call(self::GET_EXTERNAL_IP, array(), $url, self::TYPE, $purl['host'], $purl['port']);
-
+        $url = $this->getControlUrl();
+        $xml = $this->upnp->call(self::GetExternalIPAddress, array(), $url, self::WANPPPConnection);
         return IgdParser::parseAddress($xml);
+    }
+
+    public function getPortMappings()
+    {
+        $url = $this->getControlUrl();
+
+        $resuls = array();
+
+        for ($i = 0; $i < self::LIMIT; $i++) {
+
+            try {
+            $xml = $this->upnp->call(
+                self::GetGenericPortMappingEntry,
+                array('NewPortMappingIndex' => $i),
+                $url,
+                self::WANPPPConnection);
+
+            } catch (Exception $e) {
+                break;
+            }
+            $resuls[] = IgdParser::parsePortMappingEntry($xml);
+        }
+
+        return $resuls;
+
     }
 
     public function getURL()
@@ -42,5 +66,18 @@ class Igd {
     {
         if (is_null($this->controlUrl))
             throw new Exception('not discovered yet, call discover first');
+    }
+
+    /**
+     * @return string
+     */
+    public function getControlUrl()
+    {
+        $this->checkDiscovery();
+
+        $controlXml = file_get_contents($this->controlUrl);
+
+        $url = IgdParser::parseControlUrl($controlXml);
+        return $url;
     }
 }
