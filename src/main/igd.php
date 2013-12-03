@@ -8,6 +8,8 @@ class Igd
 
     const GetExternalIPAddress = "GetExternalIPAddress";
     const GetGenericPortMappingEntry = "GetGenericPortMappingEntry";
+    const AddPortMapping = "AddPortMapping";
+    const DeletePortMapping = "DeletePortMapping";
 
     const WANPPPConnection = "WANPPPConnection:1";
 
@@ -30,6 +32,41 @@ class Igd
         $url = $this->getControlUrl();
         $xml = $this->upnp->call(self::GetExternalIPAddress, array(), $url, self::WANPPPConnection);
         return IgdParser::parseAddress($xml);
+    }
+
+    public function addPortMapping($localIp, $localPort, $externalPort, $protocol, $description = 'php igd/upnp library', $duration = 0)
+    {
+        $url = $this->getControlUrl();
+
+        $this->upnp->call(
+            self::AddPortMapping,
+            array(
+                'NewExternalPort' => $externalPort,
+                'NewProtocol' => $protocol,
+                'NewInternalPort' => $localPort,
+                'NewInternalClient' => $localIp,
+                'NewEnabled' => 1,
+                'NewPortMappingDescription' => $description,
+                'NewLeaseDuration' => $duration
+            ),
+            $url,
+            self::WANPPPConnection);
+
+    }
+
+    public function deletePortMapping($externalPort, $protocol)
+    {
+        $url = $this->getControlUrl();
+
+        $this->upnp->call(
+            self::DeletePortMapping,
+            array(
+                'NewExternalPort' => $externalPort,
+                'NewProtocol' => $protocol
+            ),
+            $url,
+            self::WANPPPConnection);
+
     }
 
     public function getPortMappings()
@@ -57,6 +94,21 @@ class Igd
 
     }
 
+    public function findPortMapping($localIp, $localPort, $externalPort, $protocol)
+    {
+        $mappings = $this->getPortMappings();
+        $filtered_array = array_filter($mappings, function ($item) use ($localIp, $localPort, $externalPort, $protocol) {
+            /* @var $item PortMappingEntry */
+            return (
+                $item->externalPort == $externalPort &&
+                $item->internalClient == $localIp &&
+                $item->internalPort == $localPort &&
+                $item->protocol == $protocol
+            );
+        });
+        return $filtered_array;
+    }
+
     public function getURL()
     {
         return $this->controlUrl;
@@ -68,10 +120,7 @@ class Igd
             throw new Exception('not discovered yet, call discover first');
     }
 
-    /**
-     * @return string
-     */
-    public function getControlUrl()
+   public function getControlUrl()
     {
         $this->checkDiscovery();
 

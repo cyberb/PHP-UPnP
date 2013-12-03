@@ -3,8 +3,6 @@
 class UPnP
 {
 
-	private $curlHandle = null;
-
 	public function search( $st = 'ssdp:all', $mx = 2, $man = 'ssdp:discover', $host = '239.255.255.250', $port = 1900, $sockTimout = '5' )
 	{
         $msg = MSearchParser::request($host, $port, $man, $mx, $st);
@@ -38,17 +36,6 @@ class UPnP
             throw new Exception("Unable to find any $device");
         }
     }
-
-
-
-	public function getCurlHandle()
-	{
-		if( is_null( $this->curlHandle ) ) {
-			$this->curlHandle = curl_init();
-		}
-
-		return $this->curlHandle;
-	}
 
 	public function call( $method, $arguments, $url, $type)
 	{
